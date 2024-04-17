@@ -9,6 +9,7 @@ export async function POST(req) {
         console.log(data);
         const newFeedback = new Feedback(data);
         await newFeedback.save();
+        console.log(newFeedback);
         console.log("Feedback Created Successfully");
         return NextResponse.json({message:"Feedback Created Successfully"},newFeedback);
     } catch (error) {

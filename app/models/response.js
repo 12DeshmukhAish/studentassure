@@ -9,10 +9,12 @@ const responseSchema = new Schema({
             "responses": [
                 {
                     "question": "String",
-                    "rating": "String",
-                    "suggestions": ["String"]
+                    "rating": "String"
                 }
-            ],
+            ]
+            ,
+                    "suggestions": ["String"],
+
             "date": "Date"
         }
     ]

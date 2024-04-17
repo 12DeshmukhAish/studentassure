@@ -13,10 +13,10 @@ const feedbackSchema = new Schema(
         id: {
           type: String,
         },
-        subject_name: {
+        subject: {
           type: String,
         },
-        teacher: {
+        faculty: {
           type: String,
         },
       },

@@ -9,8 +9,8 @@ export async function POST(req) {
         console.log(data);
         const newFaculty = new Response(data);
         await newFaculty.save();
-        console.log("Response  send Successfully");
-        return NextResponse.json({message:"request send"});
+        console.log("Faculty added successfully");
+        return NextResponse.json({message:"Faculty added"});
     } catch (error) {
         console.log(error);
         return NextResponse.json({error});

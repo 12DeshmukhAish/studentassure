@@ -22,10 +22,10 @@ const feedbackSchema = new Schema(
       },
     ],
     questions: [
-      {
-        type: String,
-        required: true,
-      },
+       {
+          type: String,
+          required: true,
+       }
     ],
     students: {
       type: Number,
@@ -34,6 +34,12 @@ const feedbackSchema = new Schema(
     pwd: {
       type: String,
       required: true,
+    },
+    
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   {

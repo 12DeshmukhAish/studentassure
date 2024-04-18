@@ -9,6 +9,7 @@ const FeedbackForm = () => {
     questions: [''], 
     students: '',
     pwd: '',
+    isActive: false, // Default value for isActive
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
@@ -76,6 +77,7 @@ const FeedbackForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(formData);
       await axios.post('/api/feedback', formData);
       setSubmitted(true);
     } catch (error) {
@@ -192,6 +194,18 @@ const FeedbackForm = () => {
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             placeholder="Enter password"
           />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="isActive" className="block mb-2">Activate Feedback:</label>
+          <input
+            type="checkbox"
+            id="isActive"
+            name="isActive"
+            checked={formData.isActive}
+            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+            className="mr-2"
+          />
+          <label htmlFor="isActive" className="mr-4">Yes</label>
         </div>
         <button
           type="submit"

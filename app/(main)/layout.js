@@ -3,7 +3,9 @@ import Sidebar from "@/components/superadmin";
 export default function RootLayout({ children }) {
   return (<div className="flex">
     <Sidebar/>
-      {children}
+    <div className="w-full h-full" >
+        {children}
+      </div>
       </div>
   );
 }

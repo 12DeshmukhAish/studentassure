@@ -1,11 +1,9 @@
-import FacultyForm from '@/components/faculty'
 import React from 'react'
-
 
 const page = () => {
   return (
     <div>
-      <FacultyForm/>
+      this is questions page
     </div>
   )
 }

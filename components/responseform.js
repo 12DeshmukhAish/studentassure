@@ -1,117 +1,258 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 const ResponseForm = () => {
-    const [formData, setFormData] = useState({
-      feedback_id: '',
-      subject_id: '',
-      question: '',
-      rating: '',
-      suggestions: '',
-    });
-    const [submitted, setSubmitted] = useState(false);
-    const [error, setError] = useState('');
-  
-    const handleChange = (e) => {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      });
-    };
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [currentSubjectIndex, setCurrentSubjectIndex] = useState(0);
+  const [formData, setFormData] = useState({
+    feedback_id: '',
+    responses: [],
+  });
+  const [submittedResponses, setSubmittedResponses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        // Send a POST request to the API route with form data
-        await axios.post('/api/response', formData);
-        setSubmitted(true);
+        const response = await axios.get('/api/feedbackData');
+        setFeedbackData(response.data.feedbackData);
       } catch (error) {
-        setError(error.response.data.error);
+        setError('Error fetching feedback data');
       }
+      setLoading(false);
     };
+
+    fetchData();
+  }, []);
+
+  const handleSelectFeedback = (feedbackId) => {
+    const feedback = feedbackData.find((feedback) => feedback._id === feedbackId);
+    if (feedback) {
+      setSelectedFeedback(feedback);
+      setCurrentSubjectIndex(0);
+      setFormData({
+        feedback_id: feedbackId,
+        responses: feedback.subjects.map((subject) => ({
+          subject_id: subject._id,
+          ratings: [],
+          suggestions: '',
+        })),
+      });
+    }
+  };
+
+  const handleNextSubject = (e) => {
+    e.preventDefault();
+    if (currentSubjectIndex < selectedFeedback.subjects.length - 1) {
+      setCurrentSubjectIndex((prevIndex) => prevIndex + 1);
+    } else {
+      handleSubmit(e);
+    }
+  };
+
+  const handleRatingChange = (subjectIndex, questionIndex, rating) => {
+    setFormData((prevFormData) => {
+      const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
   
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-md shadow-md w-[50vw]">
-          <h2 className="text-2xl font-semibold mb-4">Submit Response</h2>
-          
-          <div className="mb-4">
-            <label htmlFor="feedback_id" className="block mb-2">Feedback ID:</label>
-            <input
-              type="text"
-              id="feedback_id"
-              name="feedback_id"
-              value={formData.feedback_id}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-          </div>
+      let subjectResponse = updatedResponses[subjectIndex];
   
-          <div className="mb-4">
-            <label htmlFor="subject_id" className="block mb-2">Subject ID:</label>
-            <input
-              type="text"
-              id="subject_id"
-              name="subject_id"
-              value={formData.subject_id}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-          </div>
+      if (!subjectResponse) {
+        subjectResponse = {
+          subject_id: selectedFeedback.subjects[subjectIndex]._id,
+          ratings: [],
+          suggestions: '',
+        };
+        updatedResponses[subjectIndex] = subjectResponse;
+      }
   
-          <div className="mb-4">
-            <label htmlFor="question" className="block mb-2">Question:</label>
-            <input
-              type="text"
-              id="question"
-              name="question"
-              value={formData.question}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-          </div>
+      const updatedRatings = subjectResponse.ratings ? [...subjectResponse.ratings] : [];
   
-          <div className="mb-4">
-            <label htmlFor="rating" className="block mb-2">Rating:</label>
-            <input
-              type="text"
-              id="rating"
-              name="rating"
-              value={formData.rating}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-          </div>
+      // Create rating object
+      const ratingObj = {
+        question_id: selectedFeedback.questions[questionIndex]._id,
+        rate: rating,
+      };
   
-          <div className="mb-4">
-            <label htmlFor="suggestions" className="block mb-2">Suggestions:</label>
-            <input
-              type="text"
-              id="suggestions"
-              name="suggestions"
-              value={formData.suggestions}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-          </div>
+      updatedRatings[questionIndex] = ratingObj;
   
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          >
-            Submit Response
-          </button>
-  
-          {submitted && (
-            <p className="text-green-600">Response submitted successfully!</p>
-          )}
-  
-          {error && (
-            <p className="text-red-600">Error: {error}</p>
-          )}
-        </form>
-      </div>
-    );
+      subjectResponse.ratings = updatedRatings;
+      updatedResponses[subjectIndex] = subjectResponse;
+  console.log(formData);
+      return {
+        ...prevFormData,
+        responses: updatedResponses,
+      };
+    });
   };
   
-  export default ResponseForm;
+  
+  const handleSuggestionsChange = (subjectIndex, suggestions) => {
+    setFormData((prevFormData) => {
+      const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
+
+      let subjectResponse = updatedResponses[subjectIndex];
+
+      if (!subjectResponse) {
+        subjectResponse = {
+          subject_id: selectedFeedback.subjects[subjectIndex]._id,
+          ratings: [],
+          suggestions: '',
+        };
+        updatedResponses[subjectIndex] = subjectResponse;
+      }
+
+      updatedResponses[subjectIndex] = {
+        ...subjectResponse,
+        suggestions,
+      };
+      console.log(updatedResponses);
+      return {
+        ...prevFormData,
+        responses: updatedResponses,
+      };
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/response', {
+        feedback_id: formData.feedback_id,
+        responses: formData.responses,
+      });
+      setSubmittedResponses([...submittedResponses, response.data]);
+      setFormData({
+        feedback_id: '',
+        responses: [],
+      });
+      setCurrentSubjectIndex(0);
+    } catch (error) {
+      setError('Failed to submit response. Please try again.');
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center min-h-screen bg-gray-100">
+      <div className="max-w-3xl w-full px-4 py-8 bg-white shadow-md rounded-lg mt-8">
+        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">Submit Response</h2>
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
+        {loading ? (
+          <p className="text-center">Loading...</p>
+        ) : (
+          <>
+            <div className="mb-4">
+              <label htmlFor="feedbackSelect" className="block mb-2 text-gray-700">
+                Select Feedback:
+              </label>
+              <select
+                id="feedbackSelect"
+                name="feedback_id"
+                value={formData.feedback_id}
+                onChange={(e) => handleSelectFeedback(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Feedback</option>
+                {feedbackData.map((feedback) => (
+                  <option key={feedback._id} value={feedback._id}>
+                    {feedback.feedbackTitle}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedFeedback && (
+              <div className="mb-4">
+                <form onSubmit={handleNextSubject} className="bg-white p-8 rounded-md shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                    {selectedFeedback.subjects[currentSubjectIndex].subject}
+                  </h3>
+                  <p className="text-gray-600 mb-2">
+                    Faculty: {selectedFeedback.subjects[currentSubjectIndex].faculty}
+                  </p>
+                  {selectedFeedback.questions.map((question, qIndex) => (
+                    <div key={qIndex} className="mb-4">
+                      <label className="block mb-2 text-gray-700">{question}</label>
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <React.Fragment key={rating}>
+                            <input
+                              type="radio"
+                              id={`${currentSubjectIndex}-${qIndex}-${rating}`}
+                              name={`${currentSubjectIndex}-${qIndex}`}
+                              value={rating}
+                              checked={
+                                formData.responses[currentSubjectIndex]?.ratings[qIndex]?.rate === rating
+                              }
+                              onChange={() => handleRatingChange(currentSubjectIndex, qIndex, rating)}
+                              className="mr-2"
+                            />
+                            <label htmlFor={`${currentSubjectIndex}-${qIndex}-${rating}`} className="mr-4 text-gray-700">
+                              {rating}
+                            </label>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mb-4">
+                    <label htmlFor="suggestions" className="block mb-2">
+                      Suggestions:
+                    </label>
+                    <textarea
+                      id="suggestions"
+                      name="suggestions"
+                      value={formData.responses[currentSubjectIndex]?.suggestions || ''}
+                      onChange={(e) => handleSuggestionsChange(currentSubjectIndex, e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                  >
+                    {currentSubjectIndex === selectedFeedback.subjects.length - 1 ? 'Submit Response' : 'Next Subject'}
+                  </button>
+                </form>
+              </div>
+            )}
+            {/* {submittedResponses.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Submitted Responses:</h3>
+                {submittedResponses.map((response, index) => (
+                  <div key={index} className="bg-white p-4 rounded-md shadow-md mb-4">
+                    <p>Feedback ID: {response.feedback_id}</p>
+                    {response.responses.map((subjectResponse, subjectIndex) => (
+                      <div key={subjectIndex}>
+                        <p>Subject ID: {subjectResponse.subject_id}</p>
+                        <p>Suggestions: {subjectResponse.suggestions}</p>
+                        <p>Ratings:</p>
+                        {subjectResponse.ratings.length > 0 ? (
+                          <ul>
+                            {subjectResponse.ratings.map((rating, rIndex) => (
+                              <li key={rIndex}>
+                                Question {rating.question_id}: {rating.rate}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p>No ratings submitted for this subject.</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )} */}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ResponseForm;
+
+

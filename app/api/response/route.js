@@ -15,7 +15,7 @@ console.log(formattedResponses);
         const newResponse = new Response({
             feedback_id,
             subject_id,
-            ratings: formattedResponses,
+            ratings: responses,
             suggestions,
             date: new Date() 
         });

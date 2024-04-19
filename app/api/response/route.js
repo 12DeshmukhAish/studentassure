@@ -6,21 +6,16 @@ export async function POST(req) {
     try {
         await connectMongoDB();
 
-        const { feedback_id, subject_id, responses, suggestions } = await req.json();
-
-        // Ensure responses is an array
-        const formattedResponses = Array.isArray(responses) ? responses : [];
-console.log(formattedResponses);
-        // Create a new Response document
+        const { feedback_id, responses } = await req.json();
+       
+        // Format the responses array to remove null values from ratings
+        console.log(responses);
         const newResponse = new Response({
             feedback_id,
-            subject_id,
-            ratings: formattedResponses,
-            suggestions,
+            ratings:responses,
             date: new Date() 
         });
-
-        // Save the new response document to the database
+        
         await newResponse.save();
 
         console.log("Response sent successfully");

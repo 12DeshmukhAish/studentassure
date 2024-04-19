@@ -53,43 +53,36 @@ const ResponseForm = () => {
       handleSubmit(e);
     }
   };
-
   const handleRatingChange = (subjectIndex, questionIndex, rating) => {
     setFormData((prevFormData) => {
-      const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
+        const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
   
-      let subjectResponse = updatedResponses[subjectIndex];
+        let subjectResponse = updatedResponses[subjectIndex];
   
-      if (!subjectResponse) {
-        subjectResponse = {
-          subject_id: selectedFeedback.subjects[subjectIndex]._id,
-          ratings: [],
-          suggestions: '',
-        };
+        if (!subjectResponse) {
+            subjectResponse = {
+                subject_id: selectedFeedback.subjects[subjectIndex]._id,
+                ratings: [],
+                suggestions: '',
+            };
+            updatedResponses[subjectIndex] = subjectResponse;
+        }
+  
+        const updatedRatings = subjectResponse.ratings ? [...subjectResponse.ratings] : [];
+  
+        updatedRatings[questionIndex] = rating;
+  
+        subjectResponse.ratings = updatedRatings;
         updatedResponses[subjectIndex] = subjectResponse;
-      }
-  
-      const updatedRatings = subjectResponse.ratings ? [...subjectResponse.ratings] : [];
-  
-      // Create rating object
-      const ratingObj = {
-        question_id: selectedFeedback.questions[questionIndex]._id,
-        rate: rating,
-      };
-  
-      updatedRatings[questionIndex] = ratingObj;
-  
-      subjectResponse.ratings = updatedRatings;
-      updatedResponses[subjectIndex] = subjectResponse;
-  console.log(formData);
-      return {
-        ...prevFormData,
-        responses: updatedResponses,
-      };
+console.log(updatedResponses);
+        return {
+            ...prevFormData,
+            responses: updatedResponses,
+        };
     });
-  };
-  
-  
+};
+
+
   const handleSuggestionsChange = (subjectIndex, suggestions) => {
     setFormData((prevFormData) => {
       const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
@@ -173,30 +166,29 @@ const ResponseForm = () => {
                     Faculty: {selectedFeedback.subjects[currentSubjectIndex].faculty}
                   </p>
                   {selectedFeedback.questions.map((question, qIndex) => (
-                    <div key={qIndex} className="mb-4">
-                      <label className="block mb-2 text-gray-700">{question}</label>
-                      <div className="flex items-center">
-                        {[1, 2, 3, 4, 5].map((rating) => (
-                          <React.Fragment key={rating}>
-                            <input
-                              type="radio"
-                              id={`${currentSubjectIndex}-${qIndex}-${rating}`}
-                              name={`${currentSubjectIndex}-${qIndex}`}
-                              value={rating}
-                              checked={
-                                formData.responses[currentSubjectIndex]?.ratings[qIndex]?.rate === rating
-                              }
-                              onChange={() => handleRatingChange(currentSubjectIndex, qIndex, rating)}
-                              className="mr-2"
-                            />
-                            <label htmlFor={`${currentSubjectIndex}-${qIndex}-${rating}`} className="mr-4 text-gray-700">
-                              {rating}
-                            </label>
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+    <div key={qIndex} className="mb-4">
+        <label className="block mb-2 text-gray-700">{question}</label>
+        <div className="flex items-center">
+            {[1, 2, 3, 4, 5].map((rating) => (
+                <React.Fragment key={rating}>
+                    <input
+                        type="radio"
+                        id={`${currentSubjectIndex}-${qIndex}-${rating}`}
+                        name={`${currentSubjectIndex}-${qIndex}`}
+                        value={rating}
+                        checked={formData.responses[currentSubjectIndex]?.ratings[qIndex] === rating}
+                        onChange={() => handleRatingChange(currentSubjectIndex, qIndex, rating)}
+                        className="mr-2"
+                    />
+                    <label htmlFor={`${currentSubjectIndex}-${qIndex}-${rating}`} className="mr-4 text-gray-700">
+                        {rating}
+                    </label>
+                </React.Fragment>
+            ))}
+        </div>
+    </div>
+))}
+
                   <div className="mb-4">
                     <label htmlFor="suggestions" className="block mb-2">
                       Suggestions:

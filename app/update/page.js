@@ -1,4 +1,4 @@
-import UpdateForm from '@/components/updateform'
+import UpdateForm from '@/components/update'
 import React from 'react'
 
 const page = () => {

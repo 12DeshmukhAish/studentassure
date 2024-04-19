@@ -4,36 +4,32 @@ import Response from "@/app/models/response";
 
 export async function POST(req) {
     try {
-        // Connect to MongoDB
         await connectMongoDB();
 
-        // Extract data from the request body
         const { feedback_id, subject_id, responses, suggestions } = await req.json();
 
-        // Convert the responses object into an array of objects
-        const formattedResponses = Object.entries(responses).map(([question_id, rating]) => ({
-            question_id,
-            rating
-        }));
+        // Ensure responses is an array
+        const formattedResponses = Array.isArray(responses) ? responses : [];
 console.log(formattedResponses);
-        // Create a new response object with the received data
+        // Create a new Response document
         const newResponse = new Response({
             feedback_id,
             subject_id,
             ratings: formattedResponses,
             suggestions,
-            date: new Date() // Set the current date
+            date: new Date() 
         });
 
-        // Save the new response to the database
+        // Save the new response document to the database
         await newResponse.save();
+
         console.log("Response sent successfully");
         console.log(newResponse);
 
-        // Send a success response
+        // Respond with success message
         return NextResponse.json({ message: "Response saved successfully" });
     } catch (error) {
-        // Log and send back the error
+        // Handle errors and respond with error message
         console.error("Error saving response:", error);
         return NextResponse.json({ error: "Error saving response" });
     }

@@ -1,7 +1,6 @@
 "use client"
 import Image from "next/image";
 import { CgProfile } from "react-icons/cg";
-import { BsPeople } from "react-icons/bs";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { GrCircleQuestion } from "react-icons/gr";
 import { VscFeedback } from "react-icons/vsc";
@@ -12,7 +11,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation"; 
 const sidebarItems = [
   {
-    name: "profile",
+    name: "Profile",
     href: "/super_admin",
     icon: CgProfile,
   },
@@ -21,7 +20,7 @@ const sidebarItems = [
     href: "/super_admin/feedbacks",
     icon: VscFeedback,
   }, {
-    name: "Add Questions",
+    name: "Manage Questions",
     href: "/super_admin/questions",
     icon: GrCircleQuestion,
   },

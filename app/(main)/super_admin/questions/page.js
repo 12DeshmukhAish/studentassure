@@ -1,129 +1,76 @@
 "use client"
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
-
+import React, { useState, useEffect } from 'react';
+import QuestionForm from '@/components/questionsForm';
+import QuestionsList from '@/components/questionsList';
 import axios from 'axios';
 
-const FeedbackForm = () => {
-  const [feedbackType, setFeedbackType] = useState('');
-  const [subType, setSubType] = useState('');
-  const [newQuestion, setNewQuestion] = useState('');
-  const [questions, setQuestions] = useState([]);
+const FeedbackManager = () => {
+  const [showFeedbackForm, setShowFeedbackForm] = useState(true);
+  const [savedQuestions, setSavedQuestions] = useState([]);
 
-  const handleQuestionChange = (index, value) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index] = value;
-    setQuestions(updatedQuestions);
-  };
+  useEffect(() => {
+    const fetchSavedQuestions = async () => {
+      try {
+        const data = await axios.get("/api/getquestions")
+        console.log(data.data.questions);
+        setSavedQuestions(data.data.questions);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  const addQuestion = () => {
-    if (newQuestion.trim()) {
-      setQuestions([...questions, newQuestion]);
-      setNewQuestion('');
-    }
+    fetchSavedQuestions();
+  }, []);
+
+  const handleAddFeedback = () => {
+    setShowFeedbackForm(true);
   };
-  const removeQuestion = (index) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions.splice(index, 1);
-    setQuestions(updatedQuestions);
-  };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = { feedbackType, subType, questions };
+  const handleDelete = async (index) => {
     try {
-      const response = await axios.post("/api/questions", data);
-      console.log(response.data);
+      // Make an API call to delete the feedback item at the given index
+      const response = await fetch(`/api/feedback/${savedQuestions[index]._id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        // Remove the deleted feedback item from the savedQuestions state
+        const updatedQuestions = [...savedQuestions];
+        updatedQuestions.splice(index, 1);
+        setSavedQuestions(updatedQuestions);
+      } else {
+        console.error('Failed to delete feedback item');
+      }
     } catch (error) {
       console.error(error);
     }
   };
+  const handleShowQuestions = () => {
+    setShowFeedbackForm(false);
+  };
 
   return (
-    <ResizablePanelGroup direction="horizontal" className={"h-screen"}>
-  <ResizablePanel className='h-screen flex items-center'><Card className="w-[80%] mx-auto justify-center">
-      <CardHeader>
-        <CardTitle>Add Quetions</CardTitle>
-        <CardDescription>Please generate quetions for feedback</CardDescription>
-      </CardHeader>
-      <CardContent>
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-      <div className="mb-4">
-        <Select defaultValue={feedbackType} onValueChange={(value) => setFeedbackType(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a Feedback type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="academic">Academic</SelectItem>
-            <SelectItem value="event">External</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className='h-screen'>
+      <div className="flex justify-end mb-4">
+        <button
+          className="px-4 py-2 mr-2 bg-blue-500 text-white rounded"
+          onClick={handleAddFeedback}
+        >
+          Add Questions
+        </button>
+        <button
+          className="px-4 py-2 bg-green-500 text-white rounded"
+          onClick={handleShowQuestions}
+        >
+          Show Questions
+        </button>
       </div>
-      {feedbackType === 'academic' && (
-        <div className="mb-4">
-          <Select defaultValue={subType} onValueChange={(value) => setSubType(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a sub type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="theory">Theory</SelectItem>
-              <SelectItem value="practical">Practical</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      {showFeedbackForm ? (
+        <QuestionForm onQuestionsSaved={(newQuestions) => setSavedQuestions([...savedQuestions, ...newQuestions])} />
+      ) : (
+        <QuestionsList questions={savedQuestions}
+        onDelete={handleDelete} />
       )}
-      <div className="flex mb-4">
-        <Textarea
-          placeholder="Add Question"
-          value={newQuestion}
-          onChange={(e) => setNewQuestion(e.target.value)}
-          className="flex-1 mr-2"
-        />
-        <Button type="button" onClick={addQuestion}>
-          Add
-        </Button>
-      </div>
-      
-      
-      <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button type="submit">Save</Button>
-      </CardFooter>
-    </form>
-    </CardContent>      
-    </Card></ResizablePanel>
-  <ResizableHandle />
-  <ResizablePanel><div className="flex flex-col mx-5 mt-5">
-  {questions.map((question, index) => (
-            <div key={index} className="mb-4 flex items-center">
-              <Textarea
-                value={question}
-                onChange={(e) => handleQuestionChange(index, e.target.value)}
-                className="flex-1 mr-2"
-              />
-              <Button type="button" variant="destructive" onClick={() => removeQuestion(index)} className="ml-2">
-                Remove
-              </Button>
-            </div>
-          ))}
-      </div></ResizablePanel>
-</ResizablePanelGroup>
-    
+    </div>
   );
 };
 
-export default FeedbackForm;
+export default FeedbackManager;

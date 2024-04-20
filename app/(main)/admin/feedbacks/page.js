@@ -1,10 +1,10 @@
-import RegisterPage from '@/components/adminregister'
+import FeedbackForm from '@/components/admin/create-feedback'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <RegisterPage />
+      <FeedbackForm/>
     </div>
   )
 }

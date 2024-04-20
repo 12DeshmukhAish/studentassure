@@ -1,11 +1,9 @@
-import RegisterPage from '@/components/adminregister'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <RegisterPage />
-    </div>
+    This is dashbord page    </div>
   )
 }
 

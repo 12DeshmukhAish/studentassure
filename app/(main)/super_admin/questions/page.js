@@ -28,7 +28,7 @@ const FeedbackManager = () => {
   };
   const handleDelete = async (index) => {
     try {
-      // Make an API call to delete the feedback item at the given index
+      console.log("delete quetions",index);
       const response = await fetch(`/api/feedback/${savedQuestions[index]._id}`, {
         method: 'DELETE',
       });

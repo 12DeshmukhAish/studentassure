@@ -10,7 +10,8 @@ const feedbackSchema = new Schema(
     },
     subjects: [
       {
-        id: {
+       
+        _id: {
           type: String,
         },
         subject: {

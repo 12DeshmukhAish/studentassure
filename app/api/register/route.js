@@ -8,10 +8,11 @@ export async function POST(req) {
         const data = await req.json();
         console.log(data);
 
-        const {  department, username, password } = data;
+        const {  department, username, password,classes } = data;
 
         const newRegister = new Department({
             department,
+            classes,
             _id:username,
             password
 

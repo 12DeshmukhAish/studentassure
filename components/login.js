@@ -16,12 +16,13 @@ export default function LoginComponent() {
   const { data: session } = useSession();
   useEffect(() => {
     if (session?.user?.role === "department") {
-      router.replace("/department");
+      router.replace("/admin");
     }
     
     if (session?.user?.role === "admin") {
       router.replace("/admin");      
     }
+    console.log(session);
   }, [session]);
 
   const handleSubmit = async (e) => {
@@ -43,13 +44,11 @@ export default function LoginComponent() {
     }
   };
 
-  // Define handleCancel function to clear all fields in the form
   const handleCancel = () => {
     setUserId('');
     setPassword('');
   };
 
-  // Return JSX for the LoginComponent
   return (
     <div className="flex justify-center items-center h-screen">
       <form onSubmit={handleSubmit} className="w-full max-w-md">
@@ -62,45 +61,14 @@ export default function LoginComponent() {
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             className="mb-4"
+            placeholder="User ID"
           />
           <Input
             label="Password"
             variant="bordered"
-            endContent={
-              <button
-                className="focus:outline-none"
-                type="button"
-                onClick={toggleVisibility}
-              >
-                {isVisible ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    {/* Eye icon */}
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    {/* Eye slash icon */}
-                  </svg>
-                )}
-              </button>
-            }
-            type={isVisible ? 'text' : 'password'}
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mb-4"
           />
             <div className="flex justify-center space-x-4">
             <Button color="default" onClick={handleCancel} className="w-36">

@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectMongoDB } from "@/lib/connectDb"
 import Admin from '@/app/models/superadmin';
-import Register from '../../../models/department';
+import Department from '../../../models/department';
 
 export const authOptions = ({
   providers: [
@@ -17,12 +17,13 @@ export const authOptions = ({
           const password = credentials.password;
           let userRole;
           let id;
-      
-          // Find user by _id
-          const user = await Register.findOne({ _id: Id });
+          console.log(credentials);
+          const department = await Department.findOne({ _id: Id });
           
           const admin = await Admin.findOne({ _id: Id });
-          if (user) {
+
+          console.log(department);
+          if (department) {
             userRole = "department";
             id = department._id;
           }else if (admin) {
@@ -35,11 +36,10 @@ export const authOptions = ({
           }
       
           const isVerified = (department && department.password === password) ||(admin && admin.password === password);
-      
+      console.log(isVerified);
           if (isVerified) {
             const userWithRole = {
               ...department?.toObject(), // Optional chaining to prevent errors if user is null
-              // Optional chaining to prevent errors if doctor is null
               role: userRole,
               id: id
             };
@@ -72,7 +72,6 @@ export const authOptions = ({
       return token;
     },
     async session({ session, token }) {
-      // Send properties to the client, like an access_token and user id from a provider.
       session.user.accessToken = token.accessToken;
       session.user.role = token.role;
       session.user.id = token.id; // Add id to the session

@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
-import { connectMongoDB } from '../../../libs/connectDb';
+import { connectMongoDB } from "@/lib/connectDb"
 import Admin from '@/app/models/superadmin';
 import Register from '../../../models/department';
 

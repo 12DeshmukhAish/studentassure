@@ -1,7 +1,8 @@
 "use client"
 import React, { useState,useEffect } from 'react';
 import Link from 'next/link';
-import { Input, Button } from '@nextui-org/react';
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { signIn,useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {toast} from 'sonner'

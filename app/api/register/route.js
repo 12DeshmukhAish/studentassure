@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectMongoDB } from "@/lib/connectDb";
-import Register from "@/app/models/department";
+import Department from "@/app/models/department";
 
 export async function POST(req) {
     try {
@@ -10,9 +10,9 @@ export async function POST(req) {
 
         const {  department, username, password } = data;
 
-        const newRegister = new Register({
+        const newRegister = new Department({
             department,
-            username,
+            _id:username,
             password
 
         });

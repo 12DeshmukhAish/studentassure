@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
-const registerSchema = new Schema(
+const departmentSchema = new Schema(
   {
    
     department: {
@@ -10,29 +10,23 @@ const registerSchema = new Schema(
       required: true,
       enum: ['CSE', 'First Year', 'ENTC', 'Electrial', 'Civil', 'Mechanical'], // Replace with your department options
     },
-    class: {
-      type: String,
-      required: true,
-      enum: ['FY', 'SY', 'TY', 'Final Year'], // Replace with your class options
-    },
-    
-   
+
     username: {
         type: String,
         required: true,
       },
-    password: [
+    password: 
       {
         type: String,
         required: true,
       }
-    ],
+    ,
   },
   {
     timestamps: true, // Automatically add createdAt and updatedAt fields
   }
 );
 
-const Register = mongoose.models.Register || model('Register', registerSchema);
+const Department = mongoose.models.Department || model('Department', departmentSchema);
 
-export default Register;
+export default Department;

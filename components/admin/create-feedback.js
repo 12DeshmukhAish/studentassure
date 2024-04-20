@@ -98,18 +98,7 @@ const FeedbackForm = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="mb-4">
-            <label htmlFor="feedbackTitle" className="block mb-2">Feedback Title:</label>
-            <Input
-              type="text"
-              id="feedbackTitle"
-              name="feedbackTitle"
-              value={formData.feedbackTitle}
-              onChange={(e) => setFormData({ ...formData, feedbackTitle: e.target.value })}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-              placeholder="Enter feedback title"
-            />
-          </div>
+        
         {feedbackType === 'academic' && (
           <div className="mb-4">
             <Select defaultValue={subType} onValueChange={(value) => setSubType(value)}>
@@ -122,7 +111,21 @@ const FeedbackForm = () => {
               </SelectContent>
             </Select>
           </div>
+          
+          
         )}
+        <div className="mb-4">
+            <label htmlFor="feedbackTitle" className="block mb-2">Feedback Title:</label>
+            <Input
+              type="text"
+              id="feedbackTitle"
+              name="feedbackTitle"
+              value={formData.feedbackTitle}
+              onChange={(e) => setFormData({ ...formData, feedbackTitle: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              placeholder="Enter feedback title"
+            />
+          </div>
         {feedbackType === 'academic' && formData.subjects.map((subject, index) => (
           <div className="mb-4 flex gap-4" key={index}>
             <label htmlFor={`subject${index}`} className="block mb-2">Subject {index + 1}:</label>
@@ -165,7 +168,7 @@ const FeedbackForm = () => {
             Add Subject
           </Button>
         )}
-        {feedbackType === 'academic' && formData.questions.map((question, index) => (
+        {formData.questions.map((question, index) => (
           <div className="mb-4" key={index}>
             <label htmlFor={`question${index}`} className="block mb-2">Question {index + 1}:</label>
             <div className="flex">
@@ -184,11 +187,9 @@ const FeedbackForm = () => {
             </div>
           </div>
         ))}
-        {feedbackType === 'academic' && (
           <Button onClick={handleAddQuestion}>
             Add Question
           </Button>
-        )}
        
           
     

@@ -1,9 +1,10 @@
+import RegisterPage from '@/components/adminregister'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      this is questions page
+      <RegisterPage />
     </div>
   )
 }

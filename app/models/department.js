@@ -11,7 +11,7 @@ const departmentSchema = new Schema(
       enum: ['CSE', 'First Year', 'ENTC', 'Electrial', 'Civil', 'Mechanical'], // Replace with your department options
     },
 
-    _id: {
+    username: {
         type: String,
         required: true,
       },

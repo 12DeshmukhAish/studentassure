@@ -8,6 +8,8 @@ const FeedbackForm = () => {
     subjects: [{ subject: '', faculty: '' }],
     questions: [''], 
     students: '',
+    department : '',
+    class:'',
     pwd: '',
     isActive: false, // Default value for isActive
   });
@@ -182,6 +184,28 @@ const FeedbackForm = () => {
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             placeholder="Enter number of students"
           />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <div className="md:w-1/3">
+            <label htmlFor="department" className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+              Department
+            </label>
+          </div>
+          <div className="md:w-2/3">
+           
+            <Select id="department" defaultValue={form.department} onValueChange={(value) => setDepartment(value)}>
+            <SelectTrigger className="">
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ENTC">ENTC</SelectItem>
+              <SelectItem value="CSE">CSE</SelectItem>
+              <SelectItem value="Mechanical">Mechanical</SelectItem>
+              <SelectItem value="Electrial">Electrial</SelectItem>
+              <SelectItem value="First Year">First Year</SelectItem>
+            </SelectContent>
+          </Select>
+          </div>
         </div>
         <div className="mb-4">
           <label htmlFor="pwd" className="block mb-2">Password:</label>

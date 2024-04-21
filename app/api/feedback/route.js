@@ -8,16 +8,15 @@ export async function POST(req) {
         const data = await req.json();
         console.log(data);
 
-        const { feedbackTitle, subjects, questions, students, pwd, isActive } = data;
-
-       
+        const { feedbackTitle, subjects, selectedQuestion, students, pwd, isActive } = data;       
+        console.log(selectedQuestion);
         const newFeedback = new Feedback({
             feedbackTitle,
             subjects,
-            questions,
+            questions:selectedQuestion,
             students,
             pwd,
-            isActive: isActive || false, // Set isActive to false if not provided
+            isActive: isActive || false, 
         });
 
         await newFeedback.save();

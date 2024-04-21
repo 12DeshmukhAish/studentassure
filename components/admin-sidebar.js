@@ -2,10 +2,8 @@
 import Image from "next/image";
 import { CgProfile } from "react-icons/cg";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import { GrCircleQuestion } from "react-icons/gr";
 import { VscFeedback } from "react-icons/vsc";
 import { TbReportAnalytics } from "react-icons/tb";
-import { MdOutlineManageAccounts } from "react-icons/md";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation"; 

@@ -3,7 +3,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>
+    <div className='h-screen overflow-y-auto'>
       <FeedbackForm/>
     </div>
   )

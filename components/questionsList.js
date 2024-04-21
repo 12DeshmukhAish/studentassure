@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -6,13 +7,13 @@ const QuestionsList = ({ questions, onDelete, onUpdate }) => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [updatedQuestions, setUpdatedQuestions] = useState([]);
 
-  const handleDelete = (index) => {
-    onDelete(index);
+  const handleDelete = (id) => {
+    onDelete(id); // Pass the ID of the question to be deleted
   };
 
   const handleEdit = (index) => {
     setEditingIndex(index);
-    setUpdatedQuestions(questions[index].questions);
+    setUpdatedQuestions([...questions[index].questions]); // Make a copy of questions array for editing
   };
 
   const handleQuestionChange = (index, value) => {
@@ -22,7 +23,7 @@ const QuestionsList = ({ questions, onDelete, onUpdate }) => {
   };
 
   const handleUpdate = (index) => {
-    onUpdate(index, updatedQuestions);
+    onUpdate(questions[index]._id, updatedQuestions); // Pass the ID and updated questions
     setEditingIndex(null);
   };
 
@@ -61,7 +62,7 @@ const QuestionsList = ({ questions, onDelete, onUpdate }) => {
             )}
           </div>
           <div className="flex justify-end">
-            <Button variant="destructive" onClick={() => handleDelete(index)} className="mr-2">
+            <Button variant="destructive" onClick={() => handleDelete(feedback._id)} className="mr-2">
               Delete
             </Button>
             {editingIndex === index ? (

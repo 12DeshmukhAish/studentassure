@@ -4,7 +4,6 @@ import QuestionForm from '@/components/questionsForm';
 import QuestionsList from '@/components/questionsList';
 
 import axios from 'axios';
-
 const FeedbackManager = () => {
   const [showFeedbackForm, setShowFeedbackForm] = useState(true);
   const [savedQuestions, setSavedQuestions] = useState([]);
@@ -28,17 +27,31 @@ const FeedbackManager = () => {
   };
   const handleDelete = async (index) => {
     try {
-      console.log("delete quetions",index);
-      const response = await fetch(`/api/feedback/${savedQuestions[index]._id}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        // Remove the deleted feedback item from the savedQuestions state
+      console.log(index);
+      const response = await axios.get(`/api/managequestions?_id=${index}`);
+      if (response.status === 200) {
         const updatedQuestions = [...savedQuestions];
         updatedQuestions.splice(index, 1);
         setSavedQuestions(updatedQuestions);
       } else {
         console.error('Failed to delete feedback item');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const handleUpdate = async (_id,quetions) => {
+    try {
+      console.log(quetions,_id);
+      const response = await axios.put(`/api/managequestions/update`,{_id,quetions});
+      if (response.status === 200) {
+        const updatedQuestions = [...savedQuestions];
+        updatedQuestions.splice(index, 1);
+        setSavedQuestions(updatedQuestions);
+      } else {
+        console.error('Quetions Update Failed');
       }
     } catch (error) {
       console.error(error);
@@ -68,7 +81,7 @@ const FeedbackManager = () => {
         <QuestionForm onQuestionsSaved={(newQuestions) => setSavedQuestions([...savedQuestions, ...newQuestions])} />
       ) : (
         <QuestionsList questions={savedQuestions}
-        onDelete={handleDelete} />
+        onDelete={handleDelete} onUpdate={handleUpdate} />
       )}
     </div>
   );

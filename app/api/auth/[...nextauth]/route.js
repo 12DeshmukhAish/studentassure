@@ -17,6 +17,8 @@ export const authOptions = ({
           const password = credentials.password;
           let userRole;
           let id;
+          let classes;
+          let departmentName; // Variable to hold department name
           console.log(credentials);
           const department = await Department.findOne({ _id: Id });
           
@@ -26,22 +28,25 @@ export const authOptions = ({
           if (department) {
             userRole = "department";
             id = department._id;
-          }else if (admin) {
+            classes = department.classes;
+            departmentName = department.department; // Extract department name
+            console.log(classes);
+          } else if (admin) {
             userRole = "admin";
             id = admin._id;
-          }
-           else {
-            
+          } else {
             return null;
           }
       
           const isVerified = (department && department.password === password) ||(admin && admin.password === password);
-      console.log(isVerified);
+          console.log(isVerified);
           if (isVerified) {
             const userWithRole = {
               ...department?.toObject(), // Optional chaining to prevent errors if user is null
               role: userRole,
-              id: id
+              id: id,
+              classes: classes,
+              department: departmentName // Add department name to user object
             };
             return Promise.resolve(userWithRole);
           } else {
@@ -52,13 +57,11 @@ export const authOptions = ({
           return null;
         }
       }
-      
-      ,
     }),
   ],
   session: {
     sessionCallback: async (session, user) => {
-      session.user = { ...user, role: user.role, id: user.id }; // Add id to the session
+      session.user = { ...user, role: user.role, id: user.id, classes: user.classes, department: user.department }; // Add department name to the session
       return Promise.resolve(session);
     },
   },
@@ -67,19 +70,22 @@ export const authOptions = ({
       if (account) {
         token.accessToken = account.access_token;
         token.role = user.role;
-        token.id = user.id; // Add id to the token
+        token.id = user.id;
+        token.classes = user.classes;
+        token.department = user.department; // Add department name to the token
       }
       return token;
     },
     async session({ session, token }) {
       session.user.accessToken = token.accessToken;
       session.user.role = token.role;
-      session.user.id = token.id; // Add id to the session
-
+      session.user.id = token.id;
+      session.user.classes = token.classes;
+      session.user.department = token.department; // Add department name to the session
       return session;
     }
   },
-  secret: process.env.NEXTAUTH_SECRET, // Your secret should be set in your environment variables
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/", // Customize the sign-in page route as needed
   },

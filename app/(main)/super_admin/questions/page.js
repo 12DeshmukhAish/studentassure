@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import QuestionForm from '@/components/questionsForm';
 import QuestionsList from '@/components/questionsList';
+import {toast} from 'sonner'
 
 import axios from 'axios';
 const FeedbackManager = () => {
@@ -14,8 +15,10 @@ const FeedbackManager = () => {
         const data = await axios.get("/api/getquestions")
         console.log(data.data.questions);
         setSavedQuestions(data.data.questions);
+   
       } catch (error) {
         console.error(error);
+     
       }
     };
 
@@ -35,6 +38,7 @@ const FeedbackManager = () => {
         setSavedQuestions(updatedQuestions);
       } else {
         console.error('Failed to delete feedback item');
+        toast.error('Failed to delete feedback item');
       }
     } catch (error) {
       console.error(error);

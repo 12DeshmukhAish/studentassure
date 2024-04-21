@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 const sidebarItems = [
   {
     name: "Profile",
-    href: "/super_admin",
+    href: "/super_admin/profile",
     icon: CgProfile,
   },
   {

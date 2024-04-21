@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@/app/context/UserContext";
+import {toast} from 'sonner'
 const FeedbackForm = () => {
   const [subType, setSubType] = useState('');
   const [feedbackType, setFeedbackType] = useState('');
@@ -40,7 +41,7 @@ const FeedbackForm = () => {
       setQuestions(response.data.questions);
     } catch (error) {
       console.error('Error fetching event questions:', error);
-      setError('Error fetching event questions');
+      toast.error('Error fetching event questions');
     }
   };
   

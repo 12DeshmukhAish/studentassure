@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import {toast} from 'sonner'
 export default function RegisterPage() {
   const [department, setDepartment] = useState('');
   const [classes, setClasses] = useState([]);
@@ -33,6 +33,7 @@ export default function RegisterPage() {
     form.classes = classes;
     const result = await axios.post('/api/register', form);
     console.log('Form submitted:', result);
+    toast.success('Form submitted');
   };
 
   return (

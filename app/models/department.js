@@ -10,10 +10,9 @@ const departmentSchema = new Schema(
       required: true,
       enum: ['CSE', 'First Year', 'ENTC', 'Electrial', 'Civil', 'Mechanical'], // Replace with your department options
     },
-
-    username: {
+    classes:[],
+    _id: {
         type: String,
-        required: true,
       },
     password: 
       {

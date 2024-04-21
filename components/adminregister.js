@@ -5,15 +5,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function RegisterPage() {
   const [department, setDepartment] = useState('');
+  const [classes, setClasses] = useState([]);
 
   const [form, setForm] = useState({
     department: '',
     username: '',
-    password: ''
+    password: '',
+    classes: []
   });
 
   const handleChange = (e) => {
-    
     const { id, value } = e.target;
     setForm(prevState => ({
       ...prevState,
@@ -21,9 +22,15 @@ export default function RegisterPage() {
     }));
   };
 
+  const handleClassesChange = (e) => {
+    const { value } = e.target;
+    setClasses(value.split(',').map(cls => cls.trim()));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    form.department = department
+    form.department = department;
+    form.classes = classes;
     const result = await axios.post('/api/register', form);
     console.log('Form submitted:', result);
   };
@@ -38,19 +45,28 @@ export default function RegisterPage() {
             </label>
           </div>
           <div className="md:w-2/3">
-           
             <Select id="department" defaultValue={form.department} onValueChange={(value) => setDepartment(value)}>
-            <SelectTrigger className="">
-              <SelectValue placeholder="Department" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ENTC">ENTC</SelectItem>
-              <SelectItem value="CSE">CSE</SelectItem>
-              <SelectItem value="Mechanical">Mechanical</SelectItem>
-              <SelectItem value="Electrial">Electrial</SelectItem>
-              <SelectItem value="First Year">First Year</SelectItem>
-            </SelectContent>
-          </Select>
+              <SelectTrigger className="">
+                <SelectValue placeholder="Department" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ENTC">ENTC</SelectItem>
+                <SelectItem value="CSE">CSE</SelectItem>
+                <SelectItem value="Mechanical">Mechanical</SelectItem>
+                <SelectItem value="Electrial">Electrial</SelectItem>
+                <SelectItem value="First Year">First Year</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <div className="md:w-1/3">
+            <label htmlFor="classes" className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+              Classes (comma-separated)
+            </label>
+          </div>
+          <div className="md:w-2/3">
+            <input id="classes" value={classes.join(',')} onChange={handleClassesChange} className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" />
           </div>
         </div>
         <div className="md:flex md:items-center mb-6">

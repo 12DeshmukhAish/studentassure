@@ -32,11 +32,14 @@ const Page = () => {
 
   return (
     <div className='h-screen overflow-y-auto container mx-auto p-4'>
+
       <h1 className="text-2xl font-bold mb-4">Manage Departments</h1>
 
       {/* Departments Table */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Registered Departments</h2>
+      <RegisterPage />
+
         <table className="min-w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
@@ -64,13 +67,7 @@ const Page = () => {
         </button>
       </div> */}
 
-      {/* Register Department Section */}
-      {showRegisterForm && (
-        <div className="mt-8">
-          <h1 className="text-2xl font-bold mb-4">Register Department</h1>
-          <RegisterPage />
-        </div>
-      )}
+      
     </div>
   );
 };

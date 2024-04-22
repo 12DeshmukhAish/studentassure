@@ -14,6 +14,7 @@ const Superadmin_FeedbackForm = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleChange = (e, index) => {
     const { name, value } = e.target;
@@ -50,9 +51,23 @@ const Superadmin_FeedbackForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
       await axios.post('/api/feedback', formData);
       setSubmitted(true);
+    } catch (error) {
+      setError(error.response.data.error);
+    }
+  };
+
+  const handleUpdate = () => {
+    setIsEditMode(true);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put('/api/feedback', formData);
+      setSubmitted(true);
+      setIsEditMode(false);
     } catch (error) {
       setError(error.response.data.error);
     }
@@ -63,6 +78,8 @@ const Superadmin_FeedbackForm = () => {
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-md shadow-md w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%]">
         <h2 className="text-2xl font-semibold mb-4">Submit Feedback</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
+        
+        {/* Feedback Title */}
         <div className="mb-4">
           <label htmlFor="feedbackTitle" className="block mb-2">Feedback Title:</label>
           <input
@@ -72,9 +89,10 @@ const Superadmin_FeedbackForm = () => {
             value={formData.feedbackTitle}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            placeholder="Enter feedback title"
           />
         </div>
+
+        {/* Class */}
         <div className="mb-4">
           <label htmlFor="class" className="block mb-2">Class:</label>
           <select
@@ -91,6 +109,8 @@ const Superadmin_FeedbackForm = () => {
             <option value="Final Year">Final Year</option>
           </select>
         </div>
+
+        {/* Department */}
         <div className="mb-4">
           <label htmlFor="department" className="block mb-2">Department:</label>
           <select
@@ -109,6 +129,8 @@ const Superadmin_FeedbackForm = () => {
             <option value="Mechanical">Mechanical</option>
           </select>
         </div>
+
+        {/* Feedback Type */}
         <div className="mb-4">
           <label htmlFor="feedbackType" className="block mb-2">Feedback Type:</label>
           <select
@@ -123,6 +145,8 @@ const Superadmin_FeedbackForm = () => {
             <option value="Practical">Practical</option>
           </select>
         </div>
+
+        {/* Questions */}
         {formData.questions.map((question, index) => (
           <div className="mb-4" key={index}>
             <label htmlFor={`question${index}`} className="block mb-2">Question {index + 1}:</label>
@@ -134,25 +158,32 @@ const Superadmin_FeedbackForm = () => {
                 value={question}
                 onChange={(e) => handleChange(e, index)}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                placeholder="Enter question"
               />
-              <button
-                type="button"
-                className="ml-2 bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600"
-                onClick={() => handleRemoveQuestion(index)}
-              >
-                Remove
-              </button>
+              {isEditMode && (
+                <button
+                  type="button"
+                  className="ml-2 bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600"
+                  onClick={() => handleRemoveQuestion(index)}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           </div>
         ))}
-        <button
-          type="button"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          onClick={handleAddQuestion}
-        >
-          Add Question
-        </button>
+
+        {/* Add Question Button */}
+        {isEditMode && (
+          <button
+            type="button"
+            onClick={handleAddQuestion}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+          >
+            Add Question
+          </button>
+        )}
+
+        {/* Password */}
         <div className="mb-4">
           <label htmlFor="pwd" className="block mb-2">Password:</label>
           <input
@@ -162,9 +193,10 @@ const Superadmin_FeedbackForm = () => {
             value={formData.pwd}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            placeholder="Enter password"
           />
         </div>
+
+        {/* Activate Feedback */}
         <div className="mb-4">
           <label htmlFor="isActive" className="block mb-2">Activate Feedback:</label>
           <input
@@ -177,12 +209,38 @@ const Superadmin_FeedbackForm = () => {
           />
           <label htmlFor="isActive" className="mr-4">Yes</label>
         </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-        >
-          Submit Feedback
-        </button>
+
+        {/* Submit & Save Buttons */}
+        <div className="flex">
+          {!isEditMode && (
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4 hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+            >
+              Submit Feedback
+            </button>
+          )}
+          {isEditMode && (
+            <button
+              type="button"
+              onClick={handleSave}
+              className="bg-green-500 text-white px-4 py-2 rounded-md mr-4 hover:bg-green-600 focus:outline-none focus:bg-green-600"
+            >
+              Save
+            </button>
+          )}
+          {!isEditMode && (
+            <button
+              type="button"
+              onClick={handleUpdate}
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600"
+            >
+              Update
+            </button>
+          )}
+        </div>
+
+        {/* Submission Confirmation */}
         {submitted && (
           <p className="mt-4 text-green-600">Feedback submitted successfully!</p>
         )}

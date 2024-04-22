@@ -37,6 +37,7 @@ const feedbackSchema = new Schema(
     class: {
       type: String,
     },
+
     pwd: {
       type: String,
       required: true,

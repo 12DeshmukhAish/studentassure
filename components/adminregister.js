@@ -4,13 +4,14 @@ import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from 'sonner'
 import {
-  Dialog,
+  Dialog,DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
   const [department, setDepartment] = useState('');
@@ -47,12 +48,14 @@ export default function RegisterPage() {
 
   return (
     <Dialog>
-      <DialogTrigger>Add Department</DialogTrigger>
+       <DialogTrigger asChild>
+        <Button variant="outline">Add Department</Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader></DialogHeader>
         <DialogTitle>Register department here!</DialogTitle>
         <DialogDescription>
-          <div className="flex items-center justify-center h-screen">
+       
             <form onSubmit={handleSubmit} className="w-full max-w-sm">
               <div className="md:flex md:items-center mb-6">
                 <div className="md:w-1/3">
@@ -108,13 +111,18 @@ export default function RegisterPage() {
               <div className="md:flex md:items-center">
                 <div className="md:w-1/3"></div>
                 <div className="md:w-2/3">
-                  <button type="submit" className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline-purple focus:outline-none text-white font-bold py-2 px-4 rounded">
+                <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+                  <Button type="submit" >
                     Register
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
-          </div>
+         
         </DialogDescription>
       </DialogContent>
     </Dialog>

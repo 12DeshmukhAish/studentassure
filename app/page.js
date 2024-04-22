@@ -31,7 +31,7 @@ export default function Home() {
         </section>
 
         <section className="text-center my-12">
-          <h2 className="text-3xl font-bold text-blue-500 mb-4">About Student Assure</h2>
+          <h2 className="text-3xl font-bold text-blue-500 mb-4">Welcome to  Student Assure</h2>
           <p className="text-gray-600 text-lg mx-auto max-w-xl">
             We believe in the power of student feedback to drive improvement in education. Our platform connects college students with educators to create a better learning environment for everyone.
           </p>

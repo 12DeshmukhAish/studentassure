@@ -7,6 +7,9 @@ import { TbReportAnalytics } from "react-icons/tb";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation"; 
+import { Button } from "./ui/button";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 const sidebarItems = [
   {
     name: "Profile",
@@ -28,9 +31,14 @@ const sidebarItems = [
 
 const Sidebar = () => {
   const pathname = usePathname()
+  const router = useRouter()
   const [isCollapsed, setIsCollapsed] = useState(false);
   const toggleSidebarcollapse = () => {
     setIsCollapsed((prevState) => !prevState);
+  };
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    router.replace("/");
   };
 
   return (
@@ -65,7 +73,11 @@ const Sidebar = () => {
               </li>
             );
           })}
+            <Button onClick={handleSignOut} color="primary" variant="flat">
+                Log Out
+              </Button>
         </ul>
+
       </aside>
     </div>
   );

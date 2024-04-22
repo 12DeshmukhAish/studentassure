@@ -16,7 +16,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-
+import {toast} from 'sonner'
 import axios from 'axios';
 
 const QuestionForm = () => {
@@ -48,6 +48,7 @@ const QuestionForm = () => {
     try {
       const response = await axios.post("/api/questions", data);
       console.log(response.data);
+      // toast.success('Question added successfully!');
     } catch (error) {
       console.error(error);
     }

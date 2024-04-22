@@ -14,6 +14,7 @@ const FeedbackManager = () => {
       try {
         const data = await axios.get("/api/getquestions")
         console.log(data.data.questions);
+        
         setSavedQuestions(data.data.questions);
    
       } catch (error) {
@@ -56,6 +57,7 @@ const FeedbackManager = () => {
         setSavedQuestions(updatedQuestions);
       } else {
         console.error('Quetions Update Failed');
+        toast.error('Quetions Update Failed');
       }
     } catch (error) {
       console.error(error);

@@ -39,6 +39,7 @@ const FeedbackForm = () => {
     try {
       const response = await axios.get(`/api/findquestions?type=event`);
       setQuestions(response.data.questions);
+    
     } catch (error) {
       console.error('Error fetching event questions:', error);
       toast.error('Error fetching event questions');

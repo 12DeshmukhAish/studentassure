@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const ResponseForm = () => {
   const [feedbackData, setFeedbackData] = useState([]);
@@ -20,8 +21,10 @@ const ResponseForm = () => {
       try {
         const response = await axios.get('/api/feedbackData');
         setFeedbackData(response.data.feedbackData);
+        
       } catch (error) {
         setError('Error fetching feedback data');
+        toast.error('Error fetching feedback data');
       }
       setLoading(false);
     };
@@ -125,6 +128,7 @@ console.log(updatedResponses);
       setCurrentSubjectIndex(0);
     } catch (error) {
       setError('Failed to submit response. Please try again.');
+      toast.error('ailed to submit response. Please try again.');
     }
   };
 

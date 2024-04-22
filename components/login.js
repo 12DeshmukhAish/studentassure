@@ -70,7 +70,7 @@ export default function LoginComponent() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center space-x-4 mt-10">
             <Button color="default" onClick={handleCancel} className="w-36">
               Cancel
             </Button>

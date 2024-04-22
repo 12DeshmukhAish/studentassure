@@ -27,6 +27,10 @@ const feedbackSchema = new Schema(
           required: true,
        }
     ],
+    responses: {
+      type: [String],
+      default: []
+    },
     students: {
       type: Number,
       required: true,

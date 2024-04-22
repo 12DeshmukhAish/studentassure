@@ -14,14 +14,17 @@ const ResponseForm = () => {
   const [submittedResponses, setSubmittedResponses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
 
+  const [password, setPassword] = useState('');
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const response = await axios.get('/api/feedbackData');
-        setFeedbackData(response.data.feedbackData);
-        
+
+        setFeedbackData(response.data.feedbackData.filter(feedback => feedback.isActive && feedback.students !== feedback.responses.length));
+
       } catch (error) {
         setError('Error fetching feedback data');
         toast.error('Error fetching feedback data');
@@ -33,6 +36,7 @@ const ResponseForm = () => {
   }, []);
 
   const handleSelectFeedback = (feedbackId) => {
+    setIsPasswordVerified(false)
     const feedback = feedbackData.find((feedback) => feedback._id === feedbackId);
     if (feedback) {
       setSelectedFeedback(feedback);
@@ -58,32 +62,32 @@ const ResponseForm = () => {
   };
   const handleRatingChange = (subjectIndex, questionIndex, rating) => {
     setFormData((prevFormData) => {
-        const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
-  
-        let subjectResponse = updatedResponses[subjectIndex];
-  
-        if (!subjectResponse) {
-            subjectResponse = {
-                subject_id: selectedFeedback.subjects[subjectIndex]._id,
-                ratings: [],
-                suggestions: '',
-            };
-            updatedResponses[subjectIndex] = subjectResponse;
-        }
-  
-        const updatedRatings = subjectResponse.ratings ? [...subjectResponse.ratings] : [];
-  
-        updatedRatings[questionIndex] = rating;
-  
-        subjectResponse.ratings = updatedRatings;
-        updatedResponses[subjectIndex] = subjectResponse;
-console.log(updatedResponses);
-        return {
-            ...prevFormData,
-            responses: updatedResponses,
+      const updatedResponses = prevFormData.responses ? [...prevFormData.responses] : [];
+
+      let subjectResponse = updatedResponses[subjectIndex];
+
+      if (!subjectResponse) {
+        subjectResponse = {
+          subject_id: selectedFeedback.subjects[subjectIndex]._id,
+          ratings: [],
+          suggestions: '',
         };
+        updatedResponses[subjectIndex] = subjectResponse;
+      }
+
+      const updatedRatings = subjectResponse.ratings ? [...subjectResponse.ratings] : [];
+
+      updatedRatings[questionIndex] = rating;
+
+      subjectResponse.ratings = updatedRatings;
+      updatedResponses[subjectIndex] = subjectResponse;
+      console.log(updatedResponses);
+      return {
+        ...prevFormData,
+        responses: updatedResponses,
+      };
     });
-};
+  };
 
 
   const handleSuggestionsChange = (subjectIndex, suggestions) => {
@@ -126,9 +130,22 @@ console.log(updatedResponses);
         responses: [],
       });
       setCurrentSubjectIndex(0);
+
     } catch (error) {
       setError('Failed to submit response. Please try again.');
       toast.error('ailed to submit response. Please try again.');
+    }
+  };
+  const handleSubmitPassword = async (e) => {
+    e.preventDefault();
+    try {
+      if (password === e.target.password.value) {
+        setIsPasswordVerified(true);
+      } else {
+        setError('Incorrect password');
+      }
+    } catch (error) {
+      setError('Error verifying password');
     }
   };
 
@@ -160,7 +177,34 @@ console.log(updatedResponses);
                 ))}
               </select>
             </div>
-            {selectedFeedback && (
+            {selectedFeedback && !isPasswordVerified && (
+              <div className="mb-4">
+                <form onSubmit={handleSubmitPassword} className="bg-white p-8 rounded-md shadow-md">
+                  <div className="mb-4">
+                    <label htmlFor="password" className="block mb-2 text-gray-700">
+                      Enter Password:
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)} // Allow user to type password
+          
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                  >
+                    Submit Password
+                  </button>
+                </form>
+              </div>
+            )}
+            {selectedFeedback && isPasswordVerified && (
+
               <div className="mb-4">
                 <form onSubmit={handleNextSubject} className="bg-white p-8 rounded-md shadow-md">
                   <h3 className="text-xl font-semibold mb-4 text-gray-800">
@@ -170,28 +214,28 @@ console.log(updatedResponses);
                     Faculty: {selectedFeedback.subjects[currentSubjectIndex].faculty}
                   </p>
                   {selectedFeedback.questions.map((question, qIndex) => (
-    <div key={qIndex} className="mb-4">
-        <label className="block mb-2 text-gray-700">{question}</label>
-        <div className="flex items-center">
-            {[1, 2, 3, 4, 5].map((rating) => (
-                <React.Fragment key={rating}>
-                    <input
-                        type="radio"
-                        id={`${currentSubjectIndex}-${qIndex}-${rating}`}
-                        name={`${currentSubjectIndex}-${qIndex}`}
-                        value={rating}
-                        checked={formData.responses[currentSubjectIndex]?.ratings[qIndex] === rating}
-                        onChange={() => handleRatingChange(currentSubjectIndex, qIndex, rating)}
-                        className="mr-2"
-                    />
-                    <label htmlFor={`${currentSubjectIndex}-${qIndex}-${rating}`} className="mr-4 text-gray-700">
-                        {rating}
-                    </label>
-                </React.Fragment>
-            ))}
-        </div>
-    </div>
-))}
+                    <div key={qIndex} className="mb-4">
+                      <label className="block mb-2 text-gray-700">{question}</label>
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <React.Fragment key={rating}>
+                            <input
+                              type="radio"
+                              id={`${currentSubjectIndex}-${qIndex}-${rating}`}
+                              name={`${currentSubjectIndex}-${qIndex}`}
+                              value={rating}
+                              checked={formData.responses[currentSubjectIndex]?.ratings[qIndex] === rating}
+                              onChange={() => handleRatingChange(currentSubjectIndex, qIndex, rating)}
+                              className="mr-2"
+                            />
+                            <label htmlFor={`${currentSubjectIndex}-${qIndex}-${rating}`} className="mr-4 text-gray-700">
+                              {rating}
+                            </label>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
 
                   <div className="mb-4">
                     <label htmlFor="suggestions" className="block mb-2">
@@ -213,35 +257,8 @@ console.log(updatedResponses);
                   </button>
                 </form>
               </div>
+
             )}
-            {/* {submittedResponses.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Submitted Responses:</h3>
-                {submittedResponses.map((response, index) => (
-                  <div key={index} className="bg-white p-4 rounded-md shadow-md mb-4">
-                    <p>Feedback ID: {response.feedback_id}</p>
-                    {response.responses.map((subjectResponse, subjectIndex) => (
-                      <div key={subjectIndex}>
-                        <p>Subject ID: {subjectResponse.subject_id}</p>
-                        <p>Suggestions: {subjectResponse.suggestions}</p>
-                        <p>Ratings:</p>
-                        {subjectResponse.ratings.length > 0 ? (
-                          <ul>
-                            {subjectResponse.ratings.map((rating, rIndex) => (
-                              <li key={rIndex}>
-                                Question {rating.question_id}: {rating.rate}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p>No ratings submitted for this subject.</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )} */}
           </>
         )}
       </div>
@@ -250,5 +267,3 @@ console.log(updatedResponses);
 };
 
 export default ResponseForm;
-
-
